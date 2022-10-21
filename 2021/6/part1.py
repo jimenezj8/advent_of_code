@@ -1,10 +1,7 @@
-with open('input.txt') as file:
-    data = [int(val) for val in file.read().strip('\n').split(',')]
+with open("input.txt") as file:
+    data = [int(val) for val in file.read().strip("\n").split(",")]
 
-stats = {
-    x: data.count(x)
-    for x in range(9)
-}
+stats = {x: data.count(x) for x in range(9)}
 
 today = stats.copy()
 tomorrow = {}

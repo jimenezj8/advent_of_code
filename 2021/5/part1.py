@@ -1,8 +1,14 @@
 import numpy as np
 import pandas as pd
 
-with open('input.txt') as file:
-    data = [[[int(val) for val in line.split(',')] for line in row.strip('\n').split(' -> ')] for row in file]
+with open("input.txt") as file:
+    data = [
+        [
+            [int(val) for val in line.split(",")]
+            for line in row.strip("\n").split(" -> ")
+        ]
+        for row in file
+    ]
 
 max_y = 0
 max_x = 0
@@ -43,4 +49,4 @@ for line in straight_lines:
             for x in np.arange(x1, x2 + 1).tolist():
                 tracker[y1, int(x)] += 1
 
-print('Intersections:', np.sum(tracker >= 2))
+print("Intersections:", np.sum(tracker >= 2))

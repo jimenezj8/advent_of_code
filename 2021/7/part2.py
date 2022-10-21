@@ -1,5 +1,5 @@
-with open('input.txt') as file:
-    data = [int(val) for val in file.read().strip('\n').split(',')]
+with open("input.txt") as file:
+    data = [int(val) for val in file.read().strip("\n").split(",")]
 
 
 position_stats = {pos: 0 for pos in set(data)}
@@ -8,12 +8,14 @@ for pos in position_stats.keys():
 
 positions = range(max(position_stats.keys()) + 1)
 
+
 def calc_fuel_use(current, final):
     steps = abs(current - final)
     total_fuel = 0
     for i in range(steps):
-        total_fuel += (steps - i)
+        total_fuel += steps - i
     return total_fuel
+
 
 min_fuel_req = None
 min_fuel_pos = None

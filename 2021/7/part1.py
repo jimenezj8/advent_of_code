@@ -1,5 +1,5 @@
-with open('input.txt') as file:
-    data = [int(val) for val in file.read().strip('\n').split(',')]
+with open("input.txt") as file:
+    data = [int(val) for val in file.read().strip("\n").split(",")]
 
 
 position_stats = {pos: 0 for pos in set(data)}
