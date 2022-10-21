@@ -1,6 +1,7 @@
 with open("example1.txt") as file:
     data = [line.split(" | ") for line in file.read().split("\n") if line != ""]
 
+segments = {"a", "b", "c", "d", "e", "f", "g"}
 positions = {"t", "tr", "tl", "m", "br", "bl", "b"}
 mapping = {
     0: positions.difference({"m"}),
@@ -15,6 +16,7 @@ mapping = {
     9: positions.difference({"bl"}),
 }
 
+
 def filter_clues(number: int, characters: set[str], clues: dict[int, set[str]]):
     keep = mapping[number]
     toss = positions.difference(keep)
@@ -27,24 +29,50 @@ def filter_clues(number: int, characters: set[str], clues: dict[int, set[str]]):
 
     return return_clues
 
+
+def check_all_unique(sequences: list[int]) -> bool:
+    lengths = [len(seq) for seq in sequences]
+    if set(lengths).issubset({2, 3, 4, 7}):
+        return True
+
+    return False
+
+
+def get_unique_val(sequence: str) -> str:
+    match len(sequence):
+        case 2:
+            return "1"
+        case 3:
+            return "7"
+        case 4:
+            return "4"
+        case 7:
+            return "8"
+
+
+def get_clues_from_unique(sequences: list[str]) -> dict[str, set[str]]:
+    lengths = [len(seq) for seq in sequences]
+    unique = [
+        sequences[index] for index, length in enumerate(lengths) if length in [2, 3, 4]
+    ]
+
+    clues = {loc: segments.copy() for loc in positions}
+    for seq in unique:
+        key = int(get_unique_val(seq))
+        clues = filter_clues(key, set([char for char in seq]), clues)
+
+    return clues
+
+
 total = 0
 for entry in data:
     signals = entry[0].split(" ")
     output = entry[1].split(" ")
 
-    output_lengths = [len(val) for val in output]
-    if set(output_lengths).issubset({2, 3, 4, 7}):
+    if check_all_unique(output):
         value = ""
-        for val in output:
-            match len(val):
-                case 2:
-                    value += "1"
-                case 3:
-                    value += "7"
-                case 4:
-                    value += "4"
-                case 7:
-                    value += "8"
+        for sequence in output:
+            value.append(get_unique_val(sequence))
         total += int(value)
         continue
 
@@ -58,55 +86,52 @@ for entry in data:
     # 7 has len 3
     # 8 has len 7 and provides no information to us
 
-    unique = [all_sequences[index] for index, length in enumerate(lengths) if length in [2, 3, 4]]
+    # first we create a solution space with the sequences that have unique lengths
+    potential_solution = get_clues_from_unique(all_sequences)
 
-    # first we filter the unique ones that give the most information
-
-    clues = {loc: set(["a", "b", "c", "d", "e", "f", "g"]) for loc in positions}
-    for sequence, char_count in zip(unique, [len(string) for string in unique]):
-        try:
-            match char_count:
-                case 2:
-                    key = 1
-                case 3:
-                    key = 7
-                case 4:
-                    key = 4
-                case _:
-                    continue
-            clues = filter_clues(key, set([char for char in sequence]), clues)
-        except ValueError:
-            continue
-
-    potential_solution = clues.copy()
-    print(potential_solution)
+    # then we attempt to use the remaining sequences to narrow the solution
     for sequence, num_chars in zip(all_sequences, lengths):
+        print("here")
         if num_chars == 5:
             for key in [2, 3, 5]:
-                next_attempt = filter_clues(key, set([char for char in sequence]), potential_solution)
+                next_attempt = filter_clues(
+                    key, set([char for char in sequence]), potential_solution
+                )
 
-                if all([len(possibilities) == 1 for possibilities in next_attempt.values()]):
+                if all(
+                    [len(possibilities) == 1 for possibilities in next_attempt.values()]
+                ):
+                    print("here")
                     potential_solution = next_attempt.copy()
                     break
 
                 elif set() not in next_attempt.values():
+                    print("here2")
                     potential_solution = next_attempt.copy()
 
         elif num_chars == 6:
             for key in [0, 6, 9]:
-                next_attempt = filter_clues(key, set([char for char in sequence]), potential_solution)
+                next_attempt = filter_clues(
+                    key, set([char for char in sequence]), potential_solution
+                )
 
-                if all([len(possibilities) == 1 for possibilities in next_attempt.values()]):
+                if all(
+                    [len(possibilities) == 1 for possibilities in next_attempt.values()]
+                ):
+                    print("here")
                     potential_solution = next_attempt.copy()
                     break
 
                 elif set() not in next_attempt.values():
+                    print("here2")
                     potential_solution = next_attempt.copy()
 
         else:
             continue
 
-        if all([len(possibilities) == 1 for possibilities in potential_solution.values()]):
+        if all(
+            [len(possibilities) == 1 for possibilities in potential_solution.values()]
+        ):
             break
 
 print(potential_solution)
