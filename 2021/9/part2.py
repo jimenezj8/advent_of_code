@@ -17,7 +17,7 @@ def shift(array, spots, axis=1, fill_val=10):
     return shifted
 
 
-with open("example.txt") as file:
+with open("input.txt") as file:
     data = [[char for char in line] for line in file.read().strip("\n").split("\n")]
 
 data = np.array(data, float)
@@ -42,49 +42,58 @@ solution = solution & (data < move_up)
 # guess we can brute force with a loop?
 
 
-def search(starting_point):
+def search(starting_point: tuple[int, int], exclude: set[tuple[int]] = set()) -> int:
+    size = 1
+    row, col = starting_point
+    exclude.add(starting_point)
     for dir in ["left", "right", "down", "up"]:
-        done = False
         match dir:
             case "left":
-                multiplier = -1
+                shift_val = -1
                 axis = 1
-                limit = col
             case "right":
-                multiplier = 1
+                shift_val = 1
                 axis = 1
-                limit = data.shape[1] - 1 - col
             case "down":
-                multiplier = 1
+                shift_val = 1
                 axis = 0
-                limit = data.shape[0] - 1 - row
             case "up":
-                multiplier = -1
+                shift_val = -1
                 axis = 0
-                limit = row
-        steps = 1
-        while not done:
-            if steps == limit:
-                done = True
-            elif shift(data, steps * multiplier, axis)[row, col] < 9:
-                size += 1
-                steps += 1
-            else:
-                done = True
+
+        next_row, next_col = (row + (shift_val * axis)), (
+            col + (shift_val * (1 - axis))
+        )
+        if (next_row, next_col) in exclude:
+            continue
+
+        elif next_row >= data.shape[0] or next_col >= data.shape[1]:
+            exclude.add((next_row, next_col))
+            continue
+
+        elif next_row < 0 or next_col < 0:
+            exclude.add((next_row, next_col))
+            continue
+
+        elif data[next_row, next_col] < 9:
+            size += search((next_row, next_col), exclude)
+
+    return size
 
 
 sizes = []
 for row, values in enumerate(solution):
     for col, value in enumerate(values):
         if value:
-            size = 1  # every basin is at least size 1
+            size = 0
 
-            print(sizes)
+            size += search((row, col))
+
             if len(sizes) < 3:
                 sizes.append(size)
                 sizes.sort(reverse=True)
-            elif size > sizes[0]:
-                sizes.pop(0)
+            elif size > sizes[-1]:
+                sizes.pop(-1)
                 sizes.append(size)
                 sizes.sort(reverse=True)
 
@@ -92,4 +101,4 @@ result = 1
 for val in sizes:
     result = result * val
 
-print(result)
+print(f"The 3 largest basins have sizes {sizes}, coming out to a product of {result}")
