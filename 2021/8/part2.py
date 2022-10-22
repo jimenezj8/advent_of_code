@@ -1,4 +1,7 @@
-with open("example1.txt") as file:
+import copy
+
+
+with open("input.txt") as file:
     data = [line.split(" | ") for line in file.read().split("\n") if line != ""]
 
 segments = {"a", "b", "c", "d", "e", "f", "g"}
@@ -21,7 +24,7 @@ def filter_clues(number: int, characters: set[str], clues: dict[int, set[str]]):
     keep = mapping[number]
     toss = positions.difference(keep)
 
-    return_clues = clues.copy()
+    return_clues = copy.deepcopy(clues)
     for position in keep:
         return_clues[position].intersection_update(characters)
     for position in toss:
@@ -64,6 +67,16 @@ def get_clues_from_unique(sequences: list[str]) -> dict[str, set[str]]:
     return clues
 
 
+def get_output_value(output_sequences: list[str], solution: dict[str, set[str]]):
+    value = ""
+    for seq in output_sequences:
+        segments = set()
+        for char in seq:
+            segments.add(solution[char])
+        value += [str(key) for key, val in mapping.items() if segments == val][0]
+    return int(value)
+
+
 total = 0
 for entry in data:
     signals = entry[0].split(" ")
@@ -72,69 +85,40 @@ for entry in data:
     if check_all_unique(output):
         value = ""
         for sequence in output:
-            value.append(get_unique_val(sequence))
+            value += get_unique_val(sequence)
         total += int(value)
         continue
 
     all_sequences = signals + output
     lengths = [len(val) for val in all_sequences]
 
-    # 0, 6, 9 will all have len 6 and would be missing mid, top right, and bottom left
-    # 1 has len 2 and has both right pieces
-    # 2, 3, 5 all have len 5 and missing top right + bottom left, both left, and top right + bottom left
-    # 4 has len 4
-    # 7 has len 3
-    # 8 has len 7 and provides no information to us
-
-    # first we create a solution space with the sequences that have unique lengths
     potential_solution = get_clues_from_unique(all_sequences)
-
-    # then we attempt to use the remaining sequences to narrow the solution
+    solution = None
     for sequence, num_chars in zip(all_sequences, lengths):
-        print("here")
         if num_chars == 5:
-            for key in [2, 3, 5]:
-                next_attempt = filter_clues(
-                    key, set([char for char in sequence]), potential_solution
-                )
-
-                if all(
-                    [len(possibilities) == 1 for possibilities in next_attempt.values()]
-                ):
-                    print("here")
-                    potential_solution = next_attempt.copy()
-                    break
-
-                elif set() not in next_attempt.values():
-                    print("here2")
-                    potential_solution = next_attempt.copy()
-
+            keys = [2, 3, 5]
         elif num_chars == 6:
-            for key in [0, 6, 9]:
-                next_attempt = filter_clues(
-                    key, set([char for char in sequence]), potential_solution
-                )
-
-                if all(
-                    [len(possibilities) == 1 for possibilities in next_attempt.values()]
-                ):
-                    print("here")
-                    potential_solution = next_attempt.copy()
-                    break
-
-                elif set() not in next_attempt.values():
-                    print("here2")
-                    potential_solution = next_attempt.copy()
-
+            keys = [0, 6, 9]
         else:
             continue
 
-        if all(
-            [len(possibilities) == 1 for possibilities in potential_solution.values()]
-        ):
-            break
+        for key in keys:
+            next_attempt = filter_clues(
+                key, set([char for char in sequence]), potential_solution
+            )
 
-print(potential_solution)
+            if all(
+                [len(possibilities) == 1 for possibilities in next_attempt.values()]
+            ):
+                solution = {val.pop(): key for key, val in next_attempt.items()}
+                break
+
+            elif set() not in next_attempt.values():
+                potential_solution = copy.deepcopy(next_attempt)
+
+        if solution:
+            total += get_output_value(output, solution)
+            break
 
 
 print(f"The sum of the output is {total}")
