@@ -26,4 +26,4 @@ solution = solution & (data < move_up)
 risk = data + 1
 
 total_risk = np.sum(solution * risk)
-print(total_risk)
+print(f"{np.sum(solution)} low points with a total risk of {total_risk}")
