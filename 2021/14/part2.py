@@ -5,33 +5,52 @@ filename = filenames[
 with open(filename + ".txt") as file:
     template, rules = file.read().strip().split("\n\n")
 
-template = [char for char in template]
 rules = {
     pair: result for pair, result in [rule.split(" -> ") for rule in rules.split("\n")]
 }
 
-
-def step(polymer: list) -> str:
-    inserts = {}
-    for i in range(len(polymer) - 1):
-        first = polymer[i]
-        second = polymer[i + 1]
-        inserts[2 * i + 1] = rules[first + second]
-
-    new_polymer = []
-    for i in range(len(polymer)):
-        new_polymer.append(polymer[i])
-        new = inserts.get(2 * i + 1)
-        if new:
-            new_polymer.append(new)
-    return new_polymer
+pair_counts = {}
+for i in range(len(template) - 1):
+    pair_counts[template[i] + template[i + 1]] = 1
 
 
-for i in range(10):
-    template = step(template)
+def step(stats: dict[str:int]) -> str:
+    new_stats = {}
+    for pair, count in stats.items():
+        first, second = pair
+        new = rules[pair]
 
-chars = set(template)
-counts = {char: template.count(char) for char in chars}
+        first_pair = first + new
+        second_pair = new + second
+
+        if not new_stats.get(first_pair):
+            new_stats[first_pair] = 0
+        if not new_stats.get(second_pair):
+            new_stats[second_pair] = 0
+
+        new_stats[first_pair] += count
+        new_stats[second_pair] += count
+
+    return new_stats
+
+
+for i in range(1):
+    pair_counts = step(pair_counts)
+
+
+chars = set("".join(pair_counts.keys()))
+counts = {char: 0 for char in chars}
+for char in chars:
+    counts[char] += (
+        sum([pair_counts[key] for key in pair_counts.keys() if char in key]) // 2 + 1
+    )
+    # for pair in pair_counts.keys():
+    #     if char in pair:
+    #         counts[char] += pair_counts[pair]
+
+    # counts[char] = int(counts[char] // 2)
+
+print(sum(counts.values()) + 1)
 print(
     f"Difference in counts between most frequent and least frequent characters: {max(counts.values()) - min(counts.values())}"
 )
