@@ -28,6 +28,6 @@ if __name__ == "__main__":
     pwd.reverse()
     day, year = pwd[0: 2]
 
-    # request_input(year, day)
+    request_input(year, day)
 
     print('Downloaded input.txt')
