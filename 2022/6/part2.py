@@ -1,18 +1,13 @@
 with open("./input.txt") as file:
     data = file.read()
 
-unique = set()
-order = []
+chars = []
 for i, char in enumerate(data):
-    if char in unique:
-        order = order[order.index(char) + 1 :]
-        unique.clear()
-        unique = set(order)
+    if char in chars:
+        chars = chars[chars.index(char) + 1 :]
+    chars.append(char)
 
-    order.append(char)
-    unique.add(char)
-
-    if len(order) == 14:
+    if len(chars) == 14:
         break
 
 print(i + 1)

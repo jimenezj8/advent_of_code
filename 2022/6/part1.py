@@ -1,13 +1,13 @@
 with open("./input.txt") as file:
     data = file.read()
 
-unique = set()
+chars = []
 for i, char in enumerate(data):
-    if char in unique:
-        unique.clear()
-    unique.add(char)
+    if char in chars:
+        chars = chars[chars.index(char) + 1 :]
+    chars.append(char)
 
-    if len(unique) == 4:
+    if len(chars) == 4:
         break
 
 print(i + 1)
