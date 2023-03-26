@@ -1,4 +1,7 @@
-with open("/home/jimenezj/code/advent_of_code/2022/1/input.txt") as file:
+import os
+
+home_dir = os.getenv("HOME")
+with open(f"{home_dir}/code/advent_of_code/2022/1/input.txt") as file:
     data = [
         [int(cals) for cals in elf.split("\n") if cals != ""]
         for elf in file.read().split("\n\n")
