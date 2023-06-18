@@ -1,46 +1,29 @@
-package main
+package aoc2022
 
 import (
-	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	common "jimenezj8/aoc/common"
 )
 
-type Output struct {
-	name  string
-	value int
-}
+const input string = "/home/jimenezj/code/advent_of_code/2022/1/input.txt"
 
-func main() {
+func Run() {
 	start := time.Now()
-	part1 := Output{name: "Part1", value: part1()}
-	part2 := Output{name: "Part2", value: part2()}
-	fmt.Printf("%+v", part1)
-	fmt.Printf("%+v", part2)
-	fmt.Println(start.Sub(time.Now()))
+	inputData := common.ReadInput(input)
+	part1 := part1(inputData)
+	part2 := part2(inputData)
+	runtime := time.Now().Sub(start)
+
+	solution := common.Solution{Day: 1, PartOne: part1, PartTwo: part2, RunTime: runtime}
+	common.DisplaySolution(solution)
 }
 
-func readInput() (text string) {
-	file, err := os.Open("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	contentBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(contentBytes)
-}
-
-func part1() (result int) {
-	input := readInput()
+func part1(input string) (result int) {
 	splitData := strings.Split(input, "\n\n")
 	var elfPacks = *new([]int)
 
@@ -68,8 +51,7 @@ func part1() (result int) {
 	return result
 }
 
-func part2() (result int) {
-	input := readInput()
+func part2(input string) (result int) {
 	splitData := strings.Split(input, "\n\n")
 	var elfPacks = *new([]int)
 
