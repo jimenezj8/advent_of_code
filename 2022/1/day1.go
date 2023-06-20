@@ -10,11 +10,11 @@ import (
 	common "jimenezj8/aoc/common"
 )
 
-const input string = "/home/jimenezj/code/advent_of_code/2022/1/input.txt"
+const input string = "2022/1/input.txt"
 
-func Run() {
+func Run(root string) {
 	start := time.Now()
-	inputData := common.ReadInput(input)
+	inputData := common.ReadInput(strings.Join([]string{root, input}, "/"))
 	part1 := part1(inputData)
 	part2 := part2(inputData)
 	runtime := time.Now().Sub(start)
