@@ -6,8 +6,7 @@ import (
 
 	dotenv "github.com/joho/godotenv"
 
-	day1 "jimenezj8/aoc/2022/1"
-	day2 "jimenezj8/aoc/2022/2"
+	aoc2022 "github.com/jimenezj8/advent_of_code/2022"
 )
 
 var root string
@@ -21,6 +20,6 @@ func init() {
 }
 
 func main() {
-	day1.Run(root)
-	day2.Run(root)
+	aoc2022.Day1(root)
+	aoc2022.Day2(root)
 }

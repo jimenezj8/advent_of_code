@@ -1,4 +1,4 @@
-package aoc2022
+package day1
 
 import (
 	"log"
@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	common "jimenezj8/aoc/common"
+	"github.com/jimenezj8/advent_of_code/common"
 )
 
-const input string = "2022/1/input.txt"
+const input string = "2022/day1/input.txt"
 
 func Run(root string) {
 	start := time.Now()
