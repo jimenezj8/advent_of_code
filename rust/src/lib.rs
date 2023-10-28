@@ -9,6 +9,7 @@ mod common {
 
     #[derive(Debug)]
     pub struct Solution<P1: Display, P2: Display> {
+        pub day: u32,
         pub part1: P1,
         pub part2: P2,
         pub runtime: Duration,
