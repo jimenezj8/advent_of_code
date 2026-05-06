@@ -4,6 +4,7 @@ pub mod day03;
 pub mod day04;
 pub mod day08;
 pub mod day09;
+pub mod day10;
 
 pub fn display_all() {
     println!("{:?}", day01::solve());
@@ -12,4 +13,5 @@ pub fn display_all() {
     println!("{:?}", day04::solve());
     println!("{:?}", day08::solve());
     println!("{:?}", day09::solve());
+    println!("{:?}", day10::solve());
 }
